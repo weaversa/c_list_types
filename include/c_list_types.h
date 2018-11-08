@@ -60,7 +60,7 @@ NAME *NAME##_alloc(size_t length, size_t resize_amt) {                     \
 uint8_t NAME##_resize(NAME *x, size_t new_length) {                        \
   if(new_length > x->nLength_max) {                                        \
     size_t delta = new_length - x->nLength_max;                            \
-    if(delta < x->nResizeAmt) new_length = x->nLength_max + delta;         \
+    if(delta < x->nResizeAmt) new_length = x->nLength_max + x->nResizeAmt; \
     x->nLength_max = new_length;                                           \
     x->pList =                                                             \
       (TYPE *)realloc((void*)x->pList, x->nLength_max * sizeof(TYPE));     \
