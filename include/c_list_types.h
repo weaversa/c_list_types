@@ -1,12 +1,11 @@
 #ifndef LIST_TYPES_H
 #define LIST_TYPES_H
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
 #include <assert.h>
-
-#include <stdio.h>
 
 #define NO_ERROR 0
 #define MEM_ERR 255
@@ -30,7 +29,7 @@ TYPE NAME##_peek(NAME *x);                                                 \
 uint8_t NAME##_update(NAME *x, size_t index, TYPE value);                  \
 TYPE NAME##_at(NAME *x, size_t index);                                     \
 uint8_t NAME##_copy(NAME *dst, NAME *src);                                 \
-void NAME##_free(NAME *x, void (*free_element)(TYPE value));               \
+void NAME##_free(NAME *x, void (*free_element)(TYPE *value));              \
 
 /*---------------------------------------TYPE Parameterized List-----------*/
 #define create_c_list_type(NAME,TYPE)                                      \
@@ -83,13 +82,11 @@ uint8_t NAME##_push(NAME *x, TYPE value) {                                 \
 }                                                                          \
                                                                            \
 TYPE NAME##_pop(NAME *x) {                                                 \
-  if(x->nLength == 0) return 0;                                            \
   TYPE ret = x->pList[--x->nLength];                                       \
   return ret;                                                              \
 }                                                                          \
                                                                            \
 TYPE NAME##_peek(NAME *x) {                                                \
-  if(x->nLength == 0) return 0;                                            \
   return x->pList[x->nLength-1];                                           \
 }                                                                          \
                                                                            \
@@ -101,8 +98,6 @@ uint8_t NAME##_update(NAME *x, size_t index, TYPE value) {                 \
 }                                                                          \
                                                                            \
 TYPE NAME##_at(NAME *x, size_t index) {                                    \
-  assert(x->nLength > index);                                              \
-  if(x->nLength <= index) return 0;                                        \
   return x->pList[index];                                                  \
 }                                                                          \
                                                                            \
@@ -113,20 +108,15 @@ uint8_t NAME##_copy(NAME *dst, NAME *src) {                                \
   return NO_ERROR;                                                         \
 }                                                                          \
                                                                            \
-void NAME##_free(NAME *x, void (*free_element)(TYPE value)) {              \
+void NAME##_free(NAME *x, void (*free_element)(TYPE *value)) {             \
   if(x->pList == NULL) return;                                             \
   if(free_element) {                                                       \
-    while(x->nLength) {                                                    \
-      if(x->pList[--x->nLength]) {                                         \
-        free_element(x->pList[x->nLength]);                                \
-      }                                                                    \
-    }                                                                      \
+    while(x->nLength) free_element(&x->pList[--x->nLength]);               \
   }                                                                        \
   free((void *)x->pList);                                                  \
   x->pList = NULL;                                                         \
   x->nLength = 0;                                                          \
   x->nLength_max = 0;                                                      \
-  free(x);                                                                 \
 }                                                                          \
 
 #endif

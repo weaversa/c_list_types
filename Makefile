@@ -7,8 +7,8 @@ SOURCES = test/test.c
 OBJECTS = $(SOURCES:test/%.c=obj/%.o)
 
 CC = gcc
-#DBG = -g -Wall -fstack-protector-all -pedantic
-OPT = -march=native -O3 -DNDEBUG -ffast-math -fomit-frame-pointer
+DBG = -g -Wall -fstack-protector-all -pedantic
+#OPT = -march=native -O3 -DNDEBUG -ffast-math -fomit-frame-pointer
 INCLUDES = -Iinclude
 CFLAGS = -std=gnu99 $(DBG) $(OPT) $(INCLUDES)
 

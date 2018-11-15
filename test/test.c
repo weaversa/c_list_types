@@ -3,6 +3,10 @@
 create_c_list_type(uint8_t_list, uint8_t)
 create_c_list_type(uint8_t_plist, uint8_t *)
 
+void uint8_t_free(uint8_t **x) {
+  free(*x);
+}
+
 int main (int argc, char *argv[]) {
 
   uint8_t_list *myList = uint8_t_list_alloc(0, 0);
@@ -23,7 +27,7 @@ int main (int argc, char *argv[]) {
   uint8_t_plist_update(myPointerList, 40000, malloc(sizeof(uint8_t)));
   uint8_t_plist_update(myPointerList, 400000, malloc(sizeof(uint8_t))); 
   
-  uint8_t_plist_free(myPointerList, (void (*)(uint8_t *))free);
+  uint8_t_plist_free(myPointerList, uint8_t_free);
 
   return 0;
 }
