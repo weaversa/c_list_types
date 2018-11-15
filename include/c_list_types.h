@@ -1,7 +1,6 @@
-#ifndef LIST_TYPES_H
-#define LIST_TYPES_H
+#ifndef C_LIST_TYPES_H
+#define C_LIST_TYPES_H
 
-#include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
