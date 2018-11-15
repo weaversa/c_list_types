@@ -1,8 +1,9 @@
 # C List Types
 
-There are numerous C libraries that provide support for a list, but
-none (that I found) that support stong typing. Of couse, this is not
-possible with C, but the code here provides some close approximation.
+There are numerous C libraries that provide support for a generic
+list, but none (that I found) that support strong typing. Of course,
+this is not possible with C, but the code here provides some close
+approximation.
 
 Where standard list implementations act as containers that hold `void
 *` objects, this implementation is essentially a set of macros that
