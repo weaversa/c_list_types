@@ -15,11 +15,10 @@ typedef struct NAME {                                                      \
   size_t nLength;                                                          \
   size_t nLength_max;                                                      \
   TYPE *pList;                                                             \
-  size_t nResizeAmt;                                                       \
 } NAME;                                                                    \
                                                                            \
-uint8_t NAME##_init(NAME *x, size_t length, size_t resize_amt);            \
-NAME *NAME##_alloc(size_t length, size_t resize_amt);                      \
+uint8_t NAME##_init(NAME *x, size_t length);                               \
+NAME *NAME##_alloc(size_t length);                                         \
 uint8_t NAME##_resize(NAME *x, size_t new_length);			   \
 size_t NAME##_length(NAME *x);                                             \
 uint8_t NAME##_push(NAME *x, TYPE value);                                  \
@@ -33,23 +32,21 @@ void NAME##_free(NAME *x, void (*free_element)(TYPE *value));              \
 /*---------------------------------------TYPE Parameterized List-----------*/
 #define create_c_list_type(NAME,TYPE)                                      \
                                                                            \
-uint8_t NAME##_init(NAME *x, size_t length, size_t resize_amt) {           \
+uint8_t NAME##_init(NAME *x, size_t length) {                              \
   length = length==0?1:length;                                             \
-  resize_amt = resize_amt == 0?1:resize_amt;                               \
   x->nLength = 0;                                                          \
   x->nLength_max = length;                                                 \
-  x->pList = (TYPE *)malloc(x->nLength_max * sizeof(TYPE));                \
+  x->pList = (TYPE *)calloc(x->nLength_max, sizeof(TYPE));		   \
   if(x->pList == NULL) {                                                   \
     return MEM_ERR;                                                        \
   }                                                                        \
-  x->nResizeAmt = resize_amt;                                              \
   return NO_ERROR;                                                         \
 }                                                                          \
                                                                            \
-NAME *NAME##_alloc(size_t length, size_t resize_amt) {                     \
+NAME *NAME##_alloc(size_t length) {                                        \
   NAME *x = malloc(sizeof(NAME));                                          \
   if(x == NULL) return NULL;                                               \
-  if(NAME##_init(x, length, resize_amt) == NO_ERROR)                       \
+  if(NAME##_init(x, length) == NO_ERROR)                                   \
     return x;                                                              \
   free(x);                                                                 \
   return NULL;                                                             \
@@ -57,15 +54,20 @@ NAME *NAME##_alloc(size_t length, size_t resize_amt) {                     \
                                                                            \
 uint8_t NAME##_resize(NAME *x, size_t new_length) {                        \
   if(new_length > x->nLength_max) {                                        \
-    size_t delta = new_length - x->nLength_max;                            \
-    if(delta < x->nResizeAmt) new_length = x->nLength_max + x->nResizeAmt; \
-    x->nLength_max = new_length;                                           \
     x->pList =                                                             \
-      (TYPE *)realloc((void*)x->pList, x->nLength_max * sizeof(TYPE));     \
-    if(x->pList == NULL) {                                                 \
+      (TYPE *)realloc((void *)x->pList, new_length * sizeof(TYPE));        \
+    if(x->pList == NULL) {						   \
       return MEM_ERR;                                                      \
     }                                                                      \
-  }                                                                        \
+    memset((void *)(x->pList + x->nLength_max),                            \
+           0, new_length - x->nLength_max);                                \
+    x->nLength_max = new_length;                                           \
+  } else if(new_length < x->nLength_max) {                                 \
+    x->nLength_max = new_length;                                           \
+    x->pList =								   \
+      (TYPE *)realloc((void*)x->pList, x->nLength_max * sizeof(TYPE));     \
+    if(x->nLength > x->nLength_max) x->nLength = x->nLength_max;           \
+  }									   \
   return NO_ERROR;                                                         \
 }                                                                          \
                                                                            \
@@ -75,7 +77,9 @@ size_t NAME##_length(NAME *x) {                                            \
                                                                            \
 uint8_t NAME##_push(NAME *x, TYPE value) {                                 \
   if(x->nLength == (size_t) -1) return MEM_ERR;                            \
-  if(NAME##_resize(x, x->nLength+1) != NO_ERROR) return MEM_ERR;           \
+  if(x->nLength+1 > x->nLength_max) {                                      \
+    if(NAME##_resize(x, (x->nLength+1)*2) != NO_ERROR) return MEM_ERR;	   \
+  }                                                                        \
   x->pList[x->nLength++] = value;                                          \
   return NO_ERROR;                                                         \
 }                                                                          \
