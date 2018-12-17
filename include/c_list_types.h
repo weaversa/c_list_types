@@ -65,6 +65,9 @@ uint8_t NAME##_resize(NAME *x, size_t new_length) {                        \
   } else if(new_length < x->nLength_max) {                                 \
     x->pList =								   \
       (TYPE *)realloc((void*)x->pList, new_length * sizeof(TYPE));         \
+    if(x->pList == NULL) {						   \
+      return MEM_ERR;                                                      \
+    }                                                                      \
     x->nLength_max = new_length;                                           \
     if(x->nLength > x->nLength_max) x->nLength = x->nLength_max;           \
   }									   \
