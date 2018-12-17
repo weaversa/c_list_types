@@ -110,7 +110,7 @@ TYPE NAME##_at(NAME *x, size_t index) {                                    \
 }                                                                          \
                                                                            \
 uint8_t NAME##_copy(NAME *dst, NAME *src) {                                \
-  if(NAME##_resize(dst, src->nLength) != NO_ERROR) return MEM_ERR;	   \
+  if(NAME##_resize(dst, src->nLength_max) != NO_ERROR) return MEM_ERR;	   \
   dst->nLength = src->nLength;                                             \
   memcpy(dst->pList, src->pList, dst->nLength * sizeof(TYPE));             \
   return NO_ERROR;                                                         \
