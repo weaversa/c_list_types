@@ -63,9 +63,9 @@ uint8_t NAME##_resize(NAME *x, size_t new_length) {                        \
            0, new_length - x->nLength_max);                                \
     x->nLength_max = new_length;                                           \
   } else if(new_length < x->nLength_max) {                                 \
-    x->nLength_max = new_length;                                           \
     x->pList =								   \
-      (TYPE *)realloc((void*)x->pList, x->nLength_max * sizeof(TYPE));     \
+      (TYPE *)realloc((void*)x->pList, new_length * sizeof(TYPE));         \
+    x->nLength_max = new_length;                                           \
     if(x->nLength > x->nLength_max) x->nLength = x->nLength_max;           \
   }									   \
   return NO_ERROR;                                                         \
@@ -94,7 +94,9 @@ TYPE NAME##_peek(NAME *x) {                                                \
 }                                                                          \
                                                                            \
 uint8_t NAME##_update(NAME *x, size_t index, TYPE value) {                 \
-  if(NAME##_resize(x, index+1) != NO_ERROR) return MEM_ERR;                \
+  if(index >= x->nLength) {                                                \
+    if(NAME##_resize(x, index+1) != NO_ERROR) return MEM_ERR;              \
+  }                                                                        \
   x->pList[index] = value;                                                 \
   if(x->nLength <= index) x->nLength = index+1;                            \
   return NO_ERROR;                                                         \
