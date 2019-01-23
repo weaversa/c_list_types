@@ -79,7 +79,7 @@ size_t NAME##_length(NAME *x) {                                            \
 }                                                                          \
                                                                            \
 uint8_t NAME##_push(NAME *x, TYPE value) {                                 \
-  if(x->nLength == (size_t) -1) return MEM_ERR;                            \
+  if(x->nLength == (size_t) ~0) return MEM_ERR;                            \
   if(x->nLength+1 > x->nLength_max) {                                      \
     if(NAME##_resize(x, (x->nLength+1)*2) != NO_ERROR) return MEM_ERR;     \
   }                                                                        \
@@ -97,7 +97,7 @@ TYPE NAME##_peek(NAME *x) {                                                \
 }                                                                          \
                                                                            \
 uint8_t NAME##_update(NAME *x, size_t index, TYPE value) {                 \
-  if(index >= x->nLength) {                                                \
+  if(index >= x->nLength_max) {                                            \
     if(NAME##_resize(x, index+1) != NO_ERROR) return MEM_ERR;              \
   }                                                                        \
   x->pList[index] = value;                                                 \
