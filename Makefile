@@ -1,6 +1,6 @@
 EXTRAS = Makefile LICENSE README.md
 
-HEADERS = include/c_list_types.h test/test.h
+HEADERS = include/c_list_types.h include/c_queue_types.h test/test.h
 
 SOURCES = test/test.c
 
