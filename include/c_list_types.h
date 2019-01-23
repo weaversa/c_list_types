@@ -19,7 +19,7 @@ typedef struct NAME {                                                      \
                                                                            \
 uint8_t NAME##_init(NAME *x, size_t length);                               \
 NAME *NAME##_alloc(size_t length);                                         \
-uint8_t NAME##_resize(NAME *x, size_t new_length);			   \
+uint8_t NAME##_resize(NAME *x, size_t new_length);                         \
 size_t NAME##_length(NAME *x);                                             \
 uint8_t NAME##_push(NAME *x, TYPE value);                                  \
 TYPE NAME##_pop(NAME *x);                                                  \
@@ -36,7 +36,7 @@ uint8_t NAME##_init(NAME *x, size_t length) {                              \
   length = length==0?1:length;                                             \
   x->nLength = 0;                                                          \
   x->nLength_max = length;                                                 \
-  x->pList = (TYPE *)calloc(x->nLength_max, sizeof(TYPE));		   \
+  x->pList = (TYPE *)calloc(x->nLength_max, sizeof(TYPE));                 \
   if(x->pList == NULL) {                                                   \
     return MEM_ERR;                                                        \
   }                                                                        \
@@ -56,21 +56,21 @@ uint8_t NAME##_resize(NAME *x, size_t new_length) {                        \
   if(new_length > x->nLength_max) {                                        \
     x->pList =                                                             \
       (TYPE *)realloc((void *)x->pList, new_length * sizeof(TYPE));        \
-    if(x->pList == NULL) {						   \
+    if(x->pList == NULL) {                                                 \
       return MEM_ERR;                                                      \
     }                                                                      \
     memset((void *)(x->pList + x->nLength_max),                            \
            0, new_length - x->nLength_max);                                \
     x->nLength_max = new_length;                                           \
   } else if(new_length < x->nLength_max) {                                 \
-    x->pList =								   \
+    x->pList =                                                             \
       (TYPE *)realloc((void*)x->pList, new_length * sizeof(TYPE));         \
-    if(x->pList == NULL) {						   \
+    if(x->pList == NULL) {                                                 \
       return MEM_ERR;                                                      \
     }                                                                      \
     x->nLength_max = new_length;                                           \
     if(x->nLength > x->nLength_max) x->nLength = x->nLength_max;           \
-  }									   \
+  }                                                                        \
   return NO_ERROR;                                                         \
 }                                                                          \
                                                                            \
@@ -81,7 +81,7 @@ size_t NAME##_length(NAME *x) {                                            \
 uint8_t NAME##_push(NAME *x, TYPE value) {                                 \
   if(x->nLength == (size_t) -1) return MEM_ERR;                            \
   if(x->nLength+1 > x->nLength_max) {                                      \
-    if(NAME##_resize(x, (x->nLength+1)*2) != NO_ERROR) return MEM_ERR;	   \
+    if(NAME##_resize(x, (x->nLength+1)*2) != NO_ERROR) return MEM_ERR;     \
   }                                                                        \
   x->pList[x->nLength++] = value;                                          \
   return NO_ERROR;                                                         \
