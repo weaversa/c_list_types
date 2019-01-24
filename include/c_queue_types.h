@@ -66,7 +66,7 @@ uint8_t NAME##_resize(NAME *x, size_t new_length) {                             
   }                                                                              \
   if(x->tail < x->head) {                                                        \
     size_t i;                                                                    \
-    for(i = 0; i < x->tail; i++) {                                               \
+    for(i = 0; i <= x->tail; i++) {                                               \
       x->pList[(x->nLength_max + i) % new_length] = x->pList[i];                 \
     }                                                                            \
     x->tail = (x->nLength_max + x->tail) % new_length;                           \
@@ -90,7 +90,7 @@ uint8_t NAME##_empty(NAME *x) {                                                 
 }                                                                                \
                                                                                  \
 uint8_t NAME##_enqueue(NAME *x, TYPE value) {                                    \
-  if(x->nLength  == x->nLength_max) {                                            \
+  if(x->nLength == x->nLength_max) {                                             \
     uint8_t ret = NAME##_resize(x, x->nLength_max*2);                            \
     if(ret != C_QUEUE_NO_ERROR) return ret;                                      \
   }                                                                              \
@@ -137,8 +137,6 @@ uint8_t NAME##_copy(NAME *dst, NAME *src) {                                     
 }                                                                                \
                                                                                  \
 void NAME##_clear(NAME *x) {                                                     \
-  x->head = 0;                                                                   \
-  x->tail = 0;                                                                   \
   x->nLength = 0;                                                                \
 }                                                                                \
                                                                                  \
