@@ -30,6 +30,7 @@ TYPE NAME##_dequeue(NAME *x);                                                   
 uint8_t NAME##_update(NAME *x, size_t index, TYPE value);                        \
 TYPE NAME##_at(NAME *x, size_t index);                                           \
 uint8_t NAME##_copy(NAME *dst, NAME *src);                                       \
+void NAME##_clear(NAME *x);                                                      \
 void NAME##_free(NAME *x, void (*free_element)(TYPE *value));                    \
 
 /*-----------------------------TYPE Parameterized Queue-------------------------*/
@@ -133,6 +134,12 @@ uint8_t NAME##_copy(NAME *dst, NAME *src) {                                     
   dst->nLength = src->nLength;                                                   \
   memcpy(dst->pList, src->pList, dst->nLength * sizeof(TYPE));                   \
   return C_QUEUE_NO_ERROR;                                                       \
+}                                                                                \
+                                                                                 \
+void NAME##_clear(NAME *x) {                                                     \
+  x->head = 0;                                                                   \
+  x->tail = 0;                                                                   \
+  x->nLength = 0;                                                                \
 }                                                                                \
                                                                                  \
 void NAME##_free(NAME *x, void (*free_element)(TYPE *value)) {                   \
