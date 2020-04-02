@@ -28,6 +28,7 @@ uint8_t NAME##_update(NAME *x, size_t index, TYPE value);                       
 TYPE NAME##_at(NAME *x, size_t index);                                             \
 uint8_t NAME##_copy(NAME *dst, NAME *src);                                         \
 void NAME##_free(NAME *x, void (*free_element)(TYPE *value));                      \
+void NAME##_pfree(NAME *x, void (*free_element)(TYPE value));                      \
 
 /*-----------------------------TYPE Parameterized List----------------------------*/
 #define create_c_list_type(NAME,TYPE)                                              \
@@ -120,6 +121,17 @@ void NAME##_free(NAME *x, void (*free_element)(TYPE *value)) {                  
   if(x->pList == NULL) return;                                                     \
   if(free_element) {                                                               \
     while(x->nLength) free_element(&x->pList[--x->nLength]);                       \
+  }                                                                                \
+  free((void *)x->pList);                                                          \
+  x->pList = NULL;                                                                 \
+  x->nLength = 0;                                                                  \
+  x->nLength_max = 0;                                                              \
+}                                                                                  \
+                                                                                   \
+void NAME##_pfree(NAME *x, void (*free_element)(TYPE value)) {                     \
+  if(x->pList == NULL) return;                                                     \
+  if(free_element) {                                                               \
+    while(x->nLength) free_element(x->pList[--x->nLength]);                        \
   }                                                                                \
   free((void *)x->pList);                                                          \
   x->pList = NULL;                                                                 \
